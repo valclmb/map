@@ -55,7 +55,7 @@ export const Map = ({ width, height, data }: MapProps) => {
     });
   }, [width, height, projection, data, randomIndex]);
 
-  const handleChange = (event) => {
+  const handleChange = (event: any) => {
     const target = event.currentTarget;
 
     setCountry(target.value);
