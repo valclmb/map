@@ -76,18 +76,17 @@ export const Map = ({ width, height, data }: MapProps) => {
       <canvas ref={canvasRef} width={width} height={height} />
 
       <div className="bg-black/80 p-5 text-white rounded-md w-96 m-auto backdrop-blur-md space-y-3">
-        <form>
-          <div className="flex flex-col">
-            <label htmlFor="country">Pays</label>
-            <input
-              id="country"
-              type="text"
-              className="p-1 text-black"
-              value={country}
-              onChange={handleChange}
-            />
-          </div>
-        </form>
+        <div className="flex flex-col">
+          <label htmlFor="country">Pays</label>
+          <input
+            id="country"
+            type="text"
+            className="p-1 text-black"
+            value={country}
+            onChange={handleChange}
+          />
+        </div>
+
         <button
           onClick={() => {
             setRandomIndex(getRandomIndex(countryLength));
