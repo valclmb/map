@@ -13,14 +13,14 @@ const connectToDatabase = async () => {
   }
 };
 
-export const getMap = async () => {
+export const getCountries = async () => {
   let client;
   try {
     client = await connectToDatabase();
     const db = client.db("map-quiz");
     const collection = db.collection("map");
 
-    const data = await collection.findOne();
+    const data = await collection.find().toArray();
 
     return JSON.parse(JSON.stringify(data));
   } catch (error) {
