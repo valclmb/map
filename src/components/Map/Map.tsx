@@ -16,8 +16,7 @@ export const Map = ({ width, height, countries }: MapProps) => {
     countryRef,
     capitalRef,
     handleChange,
-    country,
-    capital,
+    currentCountry,
     changeIndex,
   } = useMap(width, height, countries);
 
@@ -27,10 +26,13 @@ export const Map = ({ width, height, countries }: MapProps) => {
         changeIndex();
       }
     });
-  }, []);
+  }, [changeIndex]);
 
-  const handleKeyDown = (event: any) => {
-    if (event.key === "Enter" && values[event.target.id].value === "") {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (
+      event.key === "Enter" &&
+      (currentCountry as any)[event.currentTarget.id].value === ""
+    ) {
       changeIndex();
     }
   };
@@ -45,11 +47,11 @@ export const Map = ({ width, height, countries }: MapProps) => {
           <input
             autoFocus
             ref={countryRef}
-            disabled={country.valid}
+            disabled={currentCountry.country.valid}
             id="country"
             type="text"
             className="p-1 text-black rounded-sm disabled:bg-green-300"
-            value={country.value}
+            value={currentCountry.country.value}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
           />
@@ -58,11 +60,11 @@ export const Map = ({ width, height, countries }: MapProps) => {
           <label htmlFor="capital">Capitale</label>
           <input
             ref={capitalRef}
-            disabled={capital.valid}
+            disabled={currentCountry.capital.valid}
             id="capital"
             type="text"
             className="p-1 text-black rounded-sm disabled:bg-green-300"
-            value={capital.value}
+            value={currentCountry.capital.value}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
           />

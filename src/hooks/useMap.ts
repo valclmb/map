@@ -109,8 +109,7 @@ export const useMap = (width: number, height: number, countries: any) => {
     capitalRef,
     handleChange,
     randomIndex,
-    country: currentCountry.country,
-    capital: currentCountry.capital,
+    currentCountry,
     changeIndex,
   };
 };
