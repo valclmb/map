@@ -1,78 +1,73 @@
 "use client";
+
 import { useMap } from "@/src/hooks/useMap";
-import { GeoJsonProperties } from "geojson";
-import { Delete } from "lucide-react";
 import { useEffect } from "react";
+import { ComposableMap, Geographies, Geography } from "react-simple-maps";
+import { Form } from "../Form/Form";
 
 type MapProps = {
-  width: number;
-  height: number;
-  countries: GeoJsonProperties[];
+  data: any;
 };
 
-export const Map = ({ width, height, countries }: MapProps) => {
+export const Map = ({ data }: MapProps) => {
   const {
-    canvasRef,
-    countryRef,
-    capitalRef,
-    handleChange,
-    currentCountry,
+    randomIndex,
     changeIndex,
-  } = useMap(width, height, countries);
+    currentCountry,
+    handleChange,
+    refs,
+    badAnswers,
+  } = useMap(data.features);
+
+  const country = data.features[randomIndex]?.properties.name;
+  const capital = data.features[randomIndex]?.properties.capital;
 
   useEffect(() => {
-    window.addEventListener("keydown", (event) => {
-      if (event.key === "Backspace") {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Backspace" && e.ctrlKey) {
         changeIndex();
       }
-    });
-  }, [changeIndex]);
+    };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (
-      event.key === "Enter" &&
-      (currentCountry as any)[event.currentTarget.id].value === ""
-    ) {
-      changeIndex();
-    }
-  };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [changeIndex]);
+  console.log(data);
 
   return (
-    <div>
-      <canvas ref={canvasRef} width={width} height={height} />
-
-      <section className="m-auto bg-black text-white rounded-md p-5 w-96">
-        <div className="flex flex-col">
-          <label htmlFor="country">Pays</label>
-          <input
-            autoFocus
-            ref={countryRef}
-            disabled={currentCountry.country.valid}
-            id="country"
-            type="text"
-            className="p-1 text-black rounded-sm disabled:bg-green-300"
-            value={currentCountry.country.value}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-          />
+    <>
+      <ComposableMap projection="geoMercator" projectionConfig={{ scale: 100 }}>
+        <Geographies geography={data} stroke="#FFFFFF">
+          {({ geographies }) =>
+            geographies.map((geo, key) => (
+              <Geography
+                key={geo.rsmKey}
+                geography={geo}
+                strokeWidth={0.5}
+                style={{
+                  default: {
+                    fill: key === randomIndex ? "red" : "black",
+                    // outline: "1px solidwhite",
+                  },
+                }}
+              />
+            ))
+          }
+        </Geographies>
+      </ComposableMap>
+      <Form
+        currentCountry={currentCountry}
+        handleChange={handleChange}
+        refs={refs}
+      />
+      {badAnswers ? (
+        <div className="absolute right-1/2 translate-x-1/2 bottom-2 rounded-sm  bg-red-100 border border-red-500 p-2">
+          {badAnswers}
         </div>
-        <div className="flex flex-col">
-          <label htmlFor="capital">Capitale</label>
-          <input
-            ref={capitalRef}
-            disabled={currentCountry.capital.valid}
-            id="capital"
-            type="text"
-            className="p-1 text-black rounded-sm disabled:bg-green-300"
-            value={currentCountry.capital.value}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-          />
-        </div>
-        <p className="flex gap-2 mt-2 justify-center">
-          <Delete strokeWidth={1.5} /> Passer au pays suivant
-        </p>
-      </section>
-    </div>
+      ) : null}
+    </>
   );
 };

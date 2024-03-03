@@ -1,82 +1,56 @@
-import * as d3 from "d3-geo";
-import { FeatureCollection } from "geojson";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 type Value = {
   value: string;
   valid: boolean;
 };
 
 type Values = {
-  country: Value;
+  name: Value;
   capital: Value;
 };
 const getRandomIndex = (max: number) => {
   return Math.floor(Math.random() * max);
 };
 
-export const useMap = (width: number, height: number, countries: any) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const countryRef = useRef<HTMLInputElement>(null);
-  const capitalRef = useRef<HTMLInputElement>(null);
+export const useMap = (countries: any) => {
   const defaultValues = {
-    country: { value: "", valid: false },
+    name: { value: "", valid: false },
     capital: { value: "", valid: false },
   };
   const [currentCountry, setCurrentCountry] = useState<Values>(defaultValues);
   const [randomIndex, setRandomIndex] = useState(
     getRandomIndex(countries.length)
   );
+  const [badAnswers, setBadAnswers] = useState<boolean | string>(false);
+  const countryRef = useRef<HTMLInputElement>(null);
+  const capitalRef = useRef<HTMLInputElement>(null);
+  const country = countries[randomIndex]?.properties?.name;
+  const capital = countries[randomIndex]?.properties?.capital;
 
-  const changeIndex = () => {
+  const changeIndex = (valid = false) => {
     setRandomIndex(getRandomIndex(countries.length));
-  };
 
-  const projection = d3.geoMercator().fitSize([width, height], {
-    type: "FeatureCollection",
-    features: countries,
-  } as FeatureCollection);
+    setCurrentCountry(defaultValues);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d");
+    setTimeout(() => {
+      countryRef.current?.focus();
+    }, 500);
 
-    if (!context) {
-      return;
+    if (!valid) {
+      setBadAnswers(`La bonne réponse était ${country} - ${capital}`);
+
+      setTimeout(() => {
+        setBadAnswers(false);
+      }, 2000);
     }
-    const geoPathGenerator = d3
-      .geoPath()
-      .projection(projection)
-      .context(context); // if a context is provided, geoPath() understands that we work with canvas, not SVG
-
-    context.clearRect(0, 0, width, height);
-    context.beginPath();
-
-    countries.forEach((country: any, key: number) => {
-      let countryColor = "black";
-      let strokeColor = "white";
-
-      if (randomIndex === key) {
-        countryColor = "blue";
-      }
-
-      context.beginPath();
-      geoPathGenerator(country);
-
-      context.fillStyle = countryColor;
-      context.fill();
-      context.strokeStyle = strokeColor;
-
-      context.stroke();
-    });
-  }, [width, height, projection, countries, randomIndex]);
+  };
 
   const handleChange = (event: any) => {
     const target = event.currentTarget;
 
     const id = target.id;
-    const properties = id === "country" ? "name" : "capital";
     const propertieValue =
-      countries[randomIndex]?.properties?.[properties].toLowerCase();
+      countries[randomIndex]?.properties?.[id].toLowerCase();
 
     setCurrentCountry((curr) => {
       const result = {
@@ -86,30 +60,29 @@ export const useMap = (width: number, height: number, countries: any) => {
           valid: propertieValue === target.value.toLowerCase(),
         },
       };
-      if (id === "country" && result.country.valid) {
+
+      if (id === "name" && result.name.valid) {
         setTimeout(() => {
           capitalRef.current?.focus();
         }, 100);
       }
-      if (result.country.valid && result.capital.valid) {
-        setTimeout(() => {
-          changeIndex();
-          setCurrentCountry(defaultValues);
 
-          countryRef.current?.focus();
-        }, 200);
+      if (result.name.valid && result.capital.valid) {
+        changeIndex(true);
       }
       return result;
     });
   };
 
   return {
-    canvasRef,
-    countryRef,
-    capitalRef,
-    handleChange,
     randomIndex,
     currentCountry,
     changeIndex,
+    handleChange,
+    refs: {
+      capitalRef,
+      countryRef,
+    },
+    badAnswers,
   };
 };

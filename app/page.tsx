@@ -5,9 +5,14 @@ import { getCountries } from "./lib/data";
 export default async function Home() {
   const countries: GeoJsonProperties[] = await getCountries();
 
+  const data = {
+    type: "FeatureCollection",
+    features: countries,
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-5">
-      <Map width={1100} height={600} countries={countries} />
+    <main className="flex  max-h-screen flex-col items-center justify-between p-10">
+      <Map data={data} />
     </main>
   );
 }
