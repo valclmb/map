@@ -5,7 +5,6 @@ import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-
 type FormProps = {
   currentCountry: any;
   handleChange: (e: any) => void;
@@ -23,8 +22,8 @@ export const Form = ({
   changeIndex,
 }: FormProps) => {
   return (
-    <Card className="absolute right-1/2 bottom-10 translate-x-1/2">
-      <CardContent className="p-5 space-y-3">
+    <Card className="absolute right-1/2 bottom-2 translate-x-1/2 bg-background/50 backdrop-blur-md min-w-64">
+      <CardContent className="p-5 space-y-2">
         <div className="flex flex-col">
           <Label htmlFor="name">Pays</Label>
           <Input
@@ -52,10 +51,10 @@ export const Form = ({
         </div>
         <Button
           onClick={() => changeIndex()}
-          variant="outline"
-          className="flex mt-2 gap-1"
+          variant="ghost"
+          className="flex mt-0 gap-1"
         >
-          Passer au pays suivant Ctrl + <Delete strokeWidth={1.5} />
+          Passer au pays suivant Ctrl + <Delete strokeWidth={1.5} size={20} />
         </Button>
       </CardContent>
     </Card>

@@ -29,7 +29,11 @@ export const Map = ({ data }: MapProps) => {
 
   return (
     <>
-      <ComposableMap projection="geoMercator" projectionConfig={{ scale: 105 }}>
+      <ComposableMap
+        className=" pt-48 scale-y-[180%] scale-x-[190%]"
+        projection="geoMercator"
+        projectionConfig={{ scale: 100, center: [0, 0], rotate: [-10, 0, 0] }}
+      >
         <Geographies geography={data} stroke="#FFFFFF">
           {({ geographies }) =>
             geographies.map((geo, key) => (
