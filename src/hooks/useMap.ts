@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { toast } from "../components/ui/use-toast";
 type Value = {
   value: string;
   valid: boolean;
@@ -21,7 +22,6 @@ export const useMap = (countries: any) => {
   const [randomIndex, setRandomIndex] = useState(
     getRandomIndex(countries.length)
   );
-  const [badAnswers, setBadAnswers] = useState<boolean | string>(false);
   const countryRef = useRef<HTMLInputElement>(null);
   const capitalRef = useRef<HTMLInputElement>(null);
   const country = countries[randomIndex]?.properties?.name;
@@ -34,14 +34,13 @@ export const useMap = (countries: any) => {
 
     setTimeout(() => {
       countryRef.current?.focus();
-    }, 500);
+    }, 100);
 
     if (!valid) {
-      setBadAnswers(`La bonne réponse était ${country} - ${capital}`);
-
-      setTimeout(() => {
-        setBadAnswers(false);
-      }, 2000);
+      toast({
+        description: `La bonne réponse était ${country} - ${capital}`,
+        variant: "destructive",
+      });
     }
   };
 
@@ -68,7 +67,12 @@ export const useMap = (countries: any) => {
       }
 
       if (result.name.valid && result.capital.valid) {
-        changeIndex(true);
+        toast({
+          description: `Bravo ! Vous avez trouvé ${country} - ${capital} 🎉🎉🎉`,
+        });
+        setTimeout(() => {
+          changeIndex(true);
+        }, 200);
       }
       return result;
     });
@@ -83,6 +87,5 @@ export const useMap = (countries: any) => {
       capitalRef,
       countryRef,
     },
-    badAnswers,
   };
 };

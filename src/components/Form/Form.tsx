@@ -1,6 +1,10 @@
 "use client";
 
 import { Delete } from "lucide-react";
+import { Button } from "../ui/button";
+import { Card, CardContent } from "../ui/card";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
 type FormProps = {
   currentCountry: any;
@@ -9,39 +13,51 @@ type FormProps = {
     countryRef: any;
     capitalRef: any;
   };
+  changeIndex: (valid?: boolean) => void;
 };
 
-export const Form = ({ currentCountry, handleChange, refs }: FormProps) => {
+export const Form = ({
+  currentCountry,
+  handleChange,
+  refs,
+  changeIndex,
+}: FormProps) => {
   return (
-    <section className="absolute right-1/2 bottom-10 translate-x-1/2 m-auto border rounded-md shadow-md p-5 w-96">
-      <div className="flex flex-col">
-        <label htmlFor="name">Pays</label>
-        <input
-          ref={refs.countryRef}
-          autoFocus
-          disabled={currentCountry.name.valid}
-          id="name"
-          type="text"
-          className="p-1 text-black rounded-sm border disabled:bg-green-100 disabled:border disabled:border-green-500"
-          value={currentCountry.name.value}
-          onChange={handleChange}
-        />
-      </div>
-      <div className="flex flex-col">
-        <label htmlFor="capital">Capitale</label>
-        <input
-          ref={refs.capitalRef}
-          disabled={currentCountry.capital.valid}
-          id="capital"
-          type="text"
-          className="p-1 text-black rounded-sm border disabled:bg-green-100 disabled:border disabled:border-green-500"
-          value={currentCountry.capital.value}
-          onChange={handleChange}
-        />
-      </div>
-      <div className="flex mt-2 gap-1">
-        Ctrl + <Delete strokeWidth={1.5} /> pour passer au pays suivant
-      </div>
-    </section>
+    <Card className="absolute right-1/2 bottom-10 translate-x-1/2">
+      <CardContent className="p-5 space-y-3">
+        <div className="flex flex-col">
+          <Label htmlFor="name">Pays</Label>
+          <Input
+            ref={refs.countryRef}
+            autoFocus
+            disabled={currentCountry.name.valid}
+            id="name"
+            type="text"
+            className="p-1 mt-1 text-black rounded-sm border disabled:bg-green-100 disabled:border disabled:border-green-500"
+            value={currentCountry.name.value}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="flex flex-col">
+          <Label htmlFor="capital">Capitale</Label>
+          <Input
+            ref={refs.capitalRef}
+            disabled={currentCountry.capital.valid}
+            id="capital"
+            type="text"
+            className="p-1 mt-1 text-black rounded-sm border disabled:bg-green-100 disabled:border disabled:border-green-500"
+            value={currentCountry.capital.value}
+            onChange={handleChange}
+          />
+        </div>
+        <Button
+          onClick={() => changeIndex()}
+          variant="outline"
+          className="flex mt-2 gap-1"
+        >
+          Passer au pays suivant Ctrl + <Delete strokeWidth={1.5} />
+        </Button>
+      </CardContent>
+    </Card>
   );
 };

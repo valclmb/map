@@ -1,3 +1,4 @@
+"use server";
 import { MongoClient } from "mongodb";
 
 const uri = process.env.MONGODB_URI as string;
@@ -13,13 +14,21 @@ const connectToDatabase = async () => {
   }
 };
 
-export const getCountries = async () => {
+export const getCountries = async (filter?: string[]) => {
   let client;
   try {
     client = await connectToDatabase();
     const db = client.db("map-quiz");
     const collection = db.collection("map");
 
+    if (filter && filter.length > 0) {
+      const data = await collection
+        .find({
+          "properties.continent": { $nin: filter },
+        })
+        .toArray();
+      return JSON.parse(JSON.stringify(data));
+    }
     const data = await collection.find().toArray();
 
     return JSON.parse(JSON.stringify(data));

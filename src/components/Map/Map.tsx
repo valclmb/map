@@ -10,17 +10,8 @@ type MapProps = {
 };
 
 export const Map = ({ data }: MapProps) => {
-  const {
-    randomIndex,
-    changeIndex,
-    currentCountry,
-    handleChange,
-    refs,
-    badAnswers,
-  } = useMap(data.features);
-
-  const country = data.features[randomIndex]?.properties.name;
-  const capital = data.features[randomIndex]?.properties.capital;
+  const { randomIndex, changeIndex, currentCountry, handleChange, refs } =
+    useMap(data.features);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -35,11 +26,10 @@ export const Map = ({ data }: MapProps) => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [changeIndex]);
-  console.log(data);
 
   return (
     <>
-      <ComposableMap projection="geoMercator" projectionConfig={{ scale: 100 }}>
+      <ComposableMap projection="geoMercator" projectionConfig={{ scale: 105 }}>
         <Geographies geography={data} stroke="#FFFFFF">
           {({ geographies }) =>
             geographies.map((geo, key) => (
@@ -50,7 +40,6 @@ export const Map = ({ data }: MapProps) => {
                 style={{
                   default: {
                     fill: key === randomIndex ? "red" : "black",
-                    // outline: "1px solidwhite",
                   },
                 }}
               />
@@ -59,15 +48,11 @@ export const Map = ({ data }: MapProps) => {
         </Geographies>
       </ComposableMap>
       <Form
+        changeIndex={changeIndex}
         currentCountry={currentCountry}
         handleChange={handleChange}
         refs={refs}
       />
-      {badAnswers ? (
-        <div className="absolute right-1/2 translate-x-1/2 bottom-2 rounded-sm  bg-red-100 border border-red-500 p-2">
-          {badAnswers}
-        </div>
-      ) : null}
     </>
   );
 };
