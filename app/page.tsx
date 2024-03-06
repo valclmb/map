@@ -7,20 +7,30 @@ import { getCountries } from "./lib/data";
 
 export default function Home() {
   const [countries, setCountries] = useState<GeoJsonProperties[]>([]);
+  const [filteredCountries, setFilteredCountries] = useState<
+    GeoJsonProperties[]
+  >([]);
   const [filter, setFilter] = useState<string[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const countries = await getCountries(filter);
+    (async () => {
+      const countries = await getCountries();
       setCountries(countries);
-    };
+      setFilteredCountries(countries);
+    })();
+  }, []);
 
-    fetchData();
-  }, [filter]);
+  useEffect(() => {
+    setFilteredCountries(
+      countries.filter(
+        (country) => !filter.includes(country?.properties.continent)
+      )
+    );
+  }, [filter, countries]);
 
   const data = {
     type: "FeatureCollection",
-    features: countries,
+    features: filteredCountries,
   };
 
   return (
