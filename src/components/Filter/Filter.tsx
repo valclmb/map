@@ -3,21 +3,21 @@
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 
+const continents = [
+  "Africa",
+  "North America",
+  "South America",
+  "Asia",
+  "Europe",
+  "Oceania",
+];
+
 type FilterProps = {
   filter: string[];
   setFilter: any;
 };
 
 export const Filter = ({ setFilter }: FilterProps) => {
-  const continents = [
-    "Africa",
-    "North America",
-    "South America",
-    "Asia",
-    "Europe",
-    "Oceania",
-  ];
-
   const handleChange = (continent: string) => {
     setFilter((curr: string[]) => {
       if (curr.includes(continent)) {
@@ -28,7 +28,7 @@ export const Filter = ({ setFilter }: FilterProps) => {
   };
 
   return (
-    <div className="flex gap-3 p-2 absolute right-1/2 top-5 translate-x-1/2 border border-background bg-background/50 rounded-sm backdrop-blur-md ">
+    <nav className="flex gap-3 z-50 p-2 absolute right-1/2 top-5 translate-x-1/2 border border-background bg-background/50 rounded-sm backdrop-blur-md ">
       {continents.map((continent) => (
         <div key={continent} className="flex items-center gap-1">
           <Checkbox
@@ -39,6 +39,6 @@ export const Filter = ({ setFilter }: FilterProps) => {
           <Label>{continent}</Label>
         </div>
       ))}
-    </div>
+    </nav>
   );
 };

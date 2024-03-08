@@ -1,28 +1,22 @@
 "use client";
 
+import { GameContext } from "@/src/context/GameContext";
 import { Delete } from "lucide-react";
+import { useContext } from "react";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-type FormProps = {
-  currentCountry: any;
-  handleChange: (e: any) => void;
-  refs: {
-    countryRef: any;
-    capitalRef: any;
-  };
-  changeIndex: (valid?: boolean) => void;
-};
 
-export const Form = ({
-  currentCountry,
-  handleChange,
-  refs,
-  changeIndex,
-}: FormProps) => {
+export const Form = () => {
+  const gameContext = useContext(GameContext);
+
+  if (!gameContext) throw new Error("Game context not defined");
+
+  const { currentCountry, handleChange, refs, changeIndex } = gameContext;
+
   return (
-    <Card className="absolute right-1/2 bottom-2 translate-x-1/2 bg-background/50 backdrop-blur-md min-w-64">
+    <Card className="absolute right-1/2 bottom-2 translate-x-1/2 bg-background/90 backdrop-blur-md min-w-64">
       <CardContent className="p-5 space-y-2">
         <div className="flex flex-col">
           <Label htmlFor="name">Pays</Label>
