@@ -1,62 +1,69 @@
 "use client";
 
-import { useMap } from "@/src/hooks/useMap";
-import { useEffect } from "react";
-import { ComposableMap, Geographies, Geography } from "react-simple-maps";
-import { Form } from "../Form/Form";
+import { GameContext } from "@/src/context/GameContext";
+import { useContext } from "react";
+import {
+  ComposableMap,
+  Geographies,
+  Geography,
+  ZoomableGroup,
+} from "react-simple-maps";
 
-type MapProps = {
-  data: any;
-};
+type MapProps = {};
 
-export const Map = ({ data }: MapProps) => {
-  const { randomIndex, changeIndex, currentCountry, handleChange, refs } =
-    useMap(data.features);
+export const Map = ({}: MapProps) => {
+  const gameContext = useContext(GameContext);
+  if (!gameContext) throw new Error("gameContext is not defined");
+  const { countries, validatedCountries, randomIndex } = gameContext;
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Backspace" && e.ctrlKey) {
-        changeIndex();
-      }
-    };
+  const countryStyle = (key: number) => {
+    if (key === randomIndex) {
+      return "red";
+    }
+    if (validatedCountries.includes(countries[key]?.properties.code)) {
+      return "green";
+    }
 
-    window.addEventListener("keydown", handleKeyDown);
+    return "black";
+  };
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [changeIndex]);
+  // europe : { scale: 150, center: [70, 50], rotate: [-10, 0, 0] }
+  // africa : { scale: 200, center: [0, -25], rotate: [-10, 0, 0] }
+  // North america : { scale: 120, center: [-80, 30], rotate: [-10, 0, 0] }
+  // South america : { scale: 200, center: [-80, -50], rotate: [-10, 0, 0] }
+  // Asia : { scale: 225, center: [80, 0], rotate: [-10, 0, 0] }
+  // Oceania : { scale: 275, center: [125, -40], rotate: [-10, 0, 0] }
 
   return (
-    <>
-      <ComposableMap
-        className=" pt-48 scale-y-[180%] scale-x-[190%]"
-        projection="geoMercator"
-        projectionConfig={{ scale: 100, center: [0, 0], rotate: [-10, 0, 0] }}
-      >
-        <Geographies geography={data} stroke="#FFFFFF">
+    <ComposableMap
+      className="max-h-screen w-full"
+      projection="geoMercator"
+      projectionConfig={{
+        scale: 140,
+        center: [0, 35],
+        rotate: [-10, 0, 0],
+      }}
+    >
+      <ZoomableGroup>
+        <Geographies geography={countries} stroke="#FFFFFF">
           {({ geographies }) =>
             geographies.map((geo, key) => (
               <Geography
+                tabIndex={-1}
                 key={geo.rsmKey}
                 geography={geo}
-                strokeWidth={0.5}
+                strokeWidth={0.3}
+                fill={countryStyle(key)}
                 style={{
-                  default: {
-                    fill: key === randomIndex ? "red" : "black",
-                  },
+                  default: { outline: "none" },
+                  hover: { outline: "none" },
+                  pressed: { outline: "none" },
                 }}
               />
             ))
           }
         </Geographies>
-      </ComposableMap>
-      <Form
-        changeIndex={changeIndex}
-        currentCountry={currentCountry}
-        handleChange={handleChange}
-        refs={refs}
-      />
-    </>
+      </ZoomableGroup>
+    </ComposableMap>
   );
 };
